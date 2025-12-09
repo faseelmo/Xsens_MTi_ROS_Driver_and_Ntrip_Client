@@ -161,38 +161,39 @@ void XdaInterface::registerPublishers()
 		registerCallback(new AngularVelocityHRPublisher(m_node));
 	}
 
-	if(isDeviceVruAhrs || isDeviceGnss)
+	// Previously these publishers were only registered for VRU/AHRS or GNSS devices:
+	// if (isDeviceVruAhrs || isDeviceGnss) { ... }
+	// Now we always register them and control output via the ~pub_* parameters
+	// so raw IMU and orientation data can be published regardless of device type.
+	if (m_node->get_parameter("pub_imu", should_publish) && should_publish)
 	{
-		if (m_node->get_parameter("pub_imu", should_publish) && should_publish)
-		{
-			registerCallback(new ImuPublisher(m_node, m_device));
-		}
-		if (m_node->get_parameter("pub_quaternion", should_publish) && should_publish)
-		{
-			registerCallback(new OrientationPublisher(m_node));
-		}
-		if (m_node->get_parameter("pub_euler", should_publish) && should_publish)
-		{
-			registerCallback(new OrientationEulerPublisher(m_node));
-		}
-		if (m_node->get_parameter("pub_free_acceleration", should_publish) && should_publish)
-		{
-			registerCallback(new FreeAccelerationPublisher(m_node));
-		}
-		if (m_node->get_parameter("pub_transform", should_publish) && should_publish)
-		{
-			registerCallback(new TransformPublisher(m_node));
-		}
-		//device is sirius or avior
-		if(isDeviceSiriusAvior)
-		{
-			if (m_node->get_parameter("pub_ship_motion", should_publish) && should_publish)
-			{
-				registerCallback(new ShipMotionPublisher(m_node));
-			}
-		}
-
+		registerCallback(new ImuPublisher(m_node, m_device));
 	}
+	if (m_node->get_parameter("pub_quaternion", should_publish) && should_publish)
+	{
+		registerCallback(new OrientationPublisher(m_node));
+	}
+	if (m_node->get_parameter("pub_euler", should_publish) && should_publish)
+	{
+		registerCallback(new OrientationEulerPublisher(m_node));
+	}
+	if (m_node->get_parameter("pub_free_acceleration", should_publish) && should_publish)
+	{
+		registerCallback(new FreeAccelerationPublisher(m_node));
+	}
+	if (m_node->get_parameter("pub_transform", should_publish) && should_publish)
+	{
+		registerCallback(new TransformPublisher(m_node));
+	}
+	//device is sirius or avior
+	if(isDeviceSiriusAvior)
+	{
+		if (m_node->get_parameter("pub_ship_motion", should_publish) && should_publish)
+		{
+			registerCallback(new ShipMotionPublisher(m_node));
+		}
+	}
+
 	
 
 	if(isDeviceGnss)
