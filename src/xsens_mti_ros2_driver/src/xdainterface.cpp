@@ -467,6 +467,7 @@ bool XdaInterface::prepare()
  */
 bool XdaInterface::manualGyroBiasEstimation(uint16_t sleep, uint16_t duration)
 {
+    RCLCPP_WARN(m_node->get_logger(), "Calling Manual Gyro Bias Estimation ");
 	// Check if duration is less than 2; if so, set it to 2
     if (duration < 2)
     {
@@ -480,9 +481,12 @@ bool XdaInterface::manualGyroBiasEstimation(uint16_t sleep, uint16_t duration)
 	XsMessage snd(XMID_SetNoRotation, sizeof(uint16_t));
 	XsMessage rcv;
 	snd.setDataShort(duration);
-	if (!m_device->sendCustomMessage(snd, true, rcv, 1000))
+	if (!m_device->sendCustomMessage(snd, true, rcv, 1000)){
+        RCLCPP_WARN(m_node->get_logger(), "Manual Gyro Bias Estimation Failed");
 		return false;
+	}
 
+    RCLCPP_INFO(m_node->get_logger(), "Manual Gyro Bias Estimation Success");
 	return true;
 }
 
